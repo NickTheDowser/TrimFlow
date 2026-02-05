@@ -150,22 +150,22 @@
 
                 <!-- Dark Mode Switch -->
                 <StackPanel Grid.Column="1" 
-                           Orientation="Horizontal" 
-                           VerticalAlignment="Center">
+                   Orientation="Horizontal" 
+                   VerticalAlignment="Center">
                     <TextBlock Text="🌙" 
-                              FontSize="18" 
-                              Foreground="White"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0"/>
+                          FontSize="18" 
+                          Foreground="White"
+                          VerticalAlignment="Center"
+                          Margin="0,0,8,0"/>
                     <ToggleButton x:Name="DarkModeToggle" 
-                                 Style="{StaticResource DarkModeToggle}"
-                                 VerticalAlignment="Center"
-                                 ToolTip="Enable/Disable dark mode"/>
+                         Style="{StaticResource DarkModeToggle}"
+                         VerticalAlignment="Center"
+                         ToolTip="Enable/Disable dark mode"/>
                     <TextBlock Text="☀️" 
-                              FontSize="18" 
-                              Foreground="White"
-                              VerticalAlignment="Center"
-                              Margin="8,0,0,0"/>
+                        FontSize="18" 
+                        Foreground="White"
+                        VerticalAlignment="Center"
+                        Margin="8,0,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>

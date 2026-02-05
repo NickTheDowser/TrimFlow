@@ -6,8 +6,8 @@ using Microsoft.Win32;
 namespace TrimFlow
 {
     /// <summary>
-    /// Main window interaction logic for TrimFlow
-    /// This is where the magic happens, Boss!
+    /// Interaction logic for MainWindow.xaml.
+    /// Boss wanted automatic dark mode detection - now syncs with Windows theme!
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -21,17 +21,87 @@ namespace TrimFlow
         public MainWindow()
         {
             InitializeComponent();
+            
+            // Detect and apply Windows theme automatically
+            DetectAndApplySystemTheme();
+            
             InitializeEventHandlers();
             CheckFFmpegInstallation();
+            
+            // Listen for Windows theme changes
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
         }
 
         /// <summary>
-        /// Initialize all event handlers for UI controls.
-        /// Remember when Boss asked for dark mode? That's why we have so many handlers now!
+        /// Detect Windows dark mode setting and apply corresponding theme.
+        /// Boss wants smart theme detection!
+        /// </summary>
+        private void DetectAndApplySystemTheme()
+        {
+            bool isDarkMode = IsWindowsInDarkMode();
+            
+            if (isDarkMode)
+            {
+                ApplyDarkTheme();
+                DarkModeToggle.IsChecked = true;
+            }
+            else
+            {
+                ApplyLightTheme();
+                DarkModeToggle.IsChecked = false;
+            }
+        }
+
+        /// <summary>
+        /// Check if Windows is using dark mode.
+        /// Reads from Windows Registry - the source of truth!
+        /// </summary>
+        private bool IsWindowsInDarkMode()
+        {
+            try
+            {
+                const string registryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+                const string registryValueName = "AppsUseLightTheme";
+
+                using var key = Registry.CurrentUser.OpenSubKey(registryKeyPath);
+                var value = key?.GetValue(registryValueName);
+
+                if (value is int intValue)
+                {
+                    // 0 = Dark Mode, 1 = Light Mode
+                    return intValue == 0;
+                }
+            }
+            catch
+            {
+                // If we can't read the registry, default to dark mode (because it's cooler)
+            }
+
+            // Default to dark mode if detection fails
+            return true;
+        }
+
+        /// <summary>
+        /// Handle Windows theme changes in real-time.
+        /// User changes Windows theme? We follow along!
+        /// </summary>
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category == UserPreferenceCategory.General)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    DetectAndApplySystemTheme();
+                });
+            }
+        }
+
+        /// <summary>
+        /// Initialize all event handlers for UI controls
         /// </summary>
         private void InitializeEventHandlers()
         {
-            // Dark mode toggle handlers (because developers love dark mode!)
+            // Dark mode toggle handlers
             DarkModeToggle.Checked += DarkModeToggle_Changed;
             DarkModeToggle.Unchecked += DarkModeToggle_Changed;
 
@@ -89,7 +159,7 @@ namespace TrimFlow
 
         /// <summary>
         /// Handle dark mode toggle change.
-        /// Boss loves the dark side of the Force!
+        /// User can override the automatic theme detection!
         /// </summary>
         private void DarkModeToggle_Changed(object sender, RoutedEventArgs e)
         {
@@ -119,7 +189,7 @@ namespace TrimFlow
 
         /// <summary>
         /// Apply light theme colors to all UI elements.
-        /// For those rare souls who prefer light mode...
+        /// For those bright sunny days!
         /// </summary>
         private void ApplyLightTheme()
         {
@@ -480,6 +550,21 @@ namespace TrimFlow
         {
             LogTextBox.AppendText($"{message}\n");
             LogTextBox.ScrollToEnd();
+        }
+
+        #endregion
+
+        #region Cleanup
+
+        /// <summary>
+        /// Clean up resources when window closes
+        /// </summary>
+        protected override void OnClosed(EventArgs e)
+        {
+            // Unsubscribe from system events
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
+            
+            base.OnClosed(e);
         }
 
         #endregion
