@@ -34,7 +34,7 @@
 
 ## 📸 Screenshots
 
-> Coming soon! Check back later for UI screenshots.
+<img width="666" height="510" alt="TrimFlow" src="https://github.com/user-attachments/assets/327ebaf2-c0d6-4e33-a7e3-5cd4a0687839" />
 
 ---
 
